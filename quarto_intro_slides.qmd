@@ -1,0 +1,747 @@
+---
+title: "Introduction to Quarto"
+subtitle: "Reproducible documents for analytical work<br/>Adapted from <https://r4ds.hadley.nz/quarto.html>"
+author: "Steve Rozen"
+date: "2026-08-03"
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    incremental: false
+    embed-resources: true
+    code-line-numbers: false
+    code-copy: true
+    monofont: "Liberation Mono"
+    mainfont: "Liberation Sans"
+    css: quarto_intro_slides.css
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+## Why Quarto and Markdown?
+
+- **Communicate results, methods, and code in one reproducible
+  document**
+- **Reproducible.** Re-render the document and every number, figure, and
+  table is recomputed from the data.
+- **Multi-format.** The same `.qmd` source renders to HTML, dynamic
+  dashboards, PDF, Word, slides (and websites and books).
+- **Plain text.** Diffs cleanly in git, easy to review, easy to share.
+
+## Why this matters for analysis
+
+- No more "copy the number from the R console into the Word doc."
+- No more "which version of the figure did I paste into the slide?"
+- Reviewers and collaborators can rerun the analysis end-to-end.
+- Future-you, six months from now, can rerun it too.
+
+## Use cases
+
+- Communicate to decision-makers, who want to focus on the conclusions,
+  not the code behind the analysis.
+
+- Collaborate with other data scientists (including future you!), who
+  are interested in both your conclusions, and how you reached them
+  (i.e. the code).
+
+- Use Quarto as a modern-day analysis notebook where you capture not
+  only what you did, but also what you were thinking.
+
+## What is a Quarto document?
+
+A `.qmd` "Quarto markdown" file is a plain-text file with three kinds of
+content:
+
+1.  **YAML header** (metadata and output options).
+2.  **Markdown text** (prose, headings, lists, links).
+3.  **Code chunks** (executable R, Python, Julia, etc.).
+
+You "render it" with `quarto render file.qmd` (or the Render button in
+RStudio / VS Code / Positron)
+
+"Render" means execute the code and do the formatting to a final output
+format (e.g. HTML, dashboard, PDF, etc.) FYI, I wrote these slide in
+Quarto.
+
+## 1. The YAML header
+
+``` yaml
+---
+title: "Diamond sizes"
+author: "Hadley Wickham"
+date: 2026-06-29
+format: html
+---
+```
+
+- Lives at the top, between `---` lines.
+- Controls title, author, output format, and execution options.
+- `format:` can be `html`, `pdf`, `docx`, `revealjs` (html slides),
+  `dashboard` (html dashboard), ...
+
+## 2.1 Markdown text examples
+
+``` markdown
+
+## Heading 2 (Most quarto docs use this the major section heading)
+
+*italic*, **bold**, `code`, [a link](https://quarto.org)
+
+- bullet
+- list
+
+1. numbered
+2. list
+
+| tiny | table |
+-------|-------|
+|  a   |   b   |
+```
+
+Lightweight conventions; render to any output format; easy to read as
+plain text.
+
+## Heading 2 (Technically but most quarto docs use this the major section heading)
+
+*italic*, **bold**, `code`, [a link](https://quarto.org)
+
+- bullet
+- list
+
+1.  numbered
+2.  list
+
+| tiny | table |
+|------|-------|
+| a    | b     |
+
+## 3. Code chunks
+
+```` markdown
+```{{r}}
+#| label: simple-addition
+
+1 + 1
+2 + 2
+```
+````
+
+- Fenced with triple backticks and the engine name in braces (`{r}`).
+- Options go after `#|` at the top of the chunk.
+- Output (text, tables, figures) is inserted into the rendered document;
+  simple-addition:
+
+```{r}
+#| label: simple-addition
+
+1 + 1
+2 + 2
+```
+
+## Common chunk options
+
+| Option     | Effect                                          |
+|------------|-------------------------------------------------|
+| `echo`     | Show the source code?                           |
+| `eval`     | Run the code?                                   |
+| `include`  | Include code *and* output? (`false` hides both) |
+| `message`  | Show messages?                                  |
+| `warning`  | Show warnings?                                  |
+| `error`    | Keep rendering on error? (`true` to continue)   |
+| `results`  | `"hide"` to suppress text output                |
+| `fig-show` | `"hide"` to suppress figures                    |
+
+Set globally in YAML under `execute:` or per-chunk with `#|`.
+
+## Exercises, Quarto basics
+
+Markdown: https://quarto.org/docs/authoring/markdown-basics.html
+
+Other cheatsheets: https://rstudio.github.io/cheatsheets/quarto.pdf
+
+https://res.cloudinary.com/dyd911kmh/image/upload/v1676540721/Marketing/Blog/Quarto_Cheat_Sheet.pdf
+
+1.  Create a new Quarto document (File \> New File \> Quarto Document in
+    RStudio). Read the instructions. Practice running the chunks
+    individually. Render the document using the button and the keyboard
+    shortcut. Modify the code, re-run, and verify the output changes.
+2.  Create one new Quarto document for each of the three built-in
+    formats: HTML, PDF, and Word. Render each. How do the outputs
+    differ? How do the inputs differ? (You may need to install LaTeX for
+    PDF, RStudio will prompt you.)
+
+## Exercises, source editor
+
+1.  Create a brief CV. Title is your name. Include headings for
+    education and employment. Each section has a bulleted list of jobs /
+    degrees. Put the year in **bold**.
+2.  Copy `diamond-sizes.qmd` from
+    <https://github.com/hadley/r4ds/tree/main/quarto> into a local
+    Quarto document. Run it, then add text after the frequency polygon
+    describing its most striking features.
+
+## Figures
+
+Control figure size and captions with chunk options:
+
+```{r}
+#| label: setup
+library(tidyverse)
+```
+
+``` r
+#| label: fig-carat
+#| fig-cap: "Diamond price vs carat."
+#| fig-width: 6
+#| fig-height: 4
+#| out-width: "80%"
+ggplot(diamonds, aes(carat, price)) + geom_hex()
+```
+
+- Label starting with `fig-` makes the chunk cross-referenceable.
+- Reference it in prose as `@fig-carat`.
+
+## Figure output
+
+```{r}
+#| label: fig-carat
+#| fig-cap: "Diamond price vs carat."
+#| fig-width: 6
+#| fig-height: 4
+#| out-width: "80%"
+ggplot(diamonds, aes(carat, price)) + geom_hex()
+```
+
+
+## More on figures
+
+Sizing figures and the text in figures in Quarto is
+tricky, because of mutliple frames of reference.
+On the next slide is the output of
+
+```{{r}}
+library(tidyplots)
+tidyplot(diamonds, carat, price) |>
+    add(geom_hex(aes(fill = after_stat(count)), bins = 40)) |>
+    add(scale_fill_viridis_c())
+```
+
+## Output from previous slide
+
+```{r}
+#| label: fig-carat2
+library(tidyplots)
+tidyplot(diamonds, carat, price) |>
+    add(geom_hex(aes(fill = after_stat(count)), bins = 40)) |>
+    add(scale_fill_viridis_c())
+```
+
+(`tidyplots` uses fixed output size by default)
+
+## Try again
+
+```{{r}}
+tidyplot(diamonds, carat, price, height = NA, width = NA) |>
+    add(geom_hex(aes(fill = after_stat(count)), bins = 40)) |>
+    add(scale_fill_viridis_c())
+```
+
+```{r}
+library(tidyplots)
+tidyplot(diamonds, carat, price, height = NA, width = NA) |>
+    add(geom_hex(aes(fill = after_stat(count)), bins = 40)) |>
+    add(scale_fill_viridis_c())
+```
+
+## Try again again
+
+
+```{{r}}
+tidyplot(diamonds, carat, price, height = NA, width = NA) |>
+    add(geom_hex(aes(fill = after_stat(count)), bins = 40)) |>
+    add(scale_fill_viridis_c())
+```
+
+```{r}
+#| fig-width: 4
+#| fig-height: 4
+library(tidyplots)
+tidyplot(diamonds, carat, price, height = NA, width = NA) |>
+    add(geom_hex(aes(fill = after_stat(count)), bins = 40)) |>
+    add(scale_fill_viridis_c())
+```
+
+## Try yet again
+
+
+```{{r}}
+tidyplot(diamonds, carat, price, height = NA, width = NA) |>
+    add(geom_hex(aes(fill = after_stat(count)), bins = 40)) |>
+    add(scale_fill_viridis_c()) |>
+    adjust_font(fontsize = 14)
+```
+
+```{r}
+#| fig-width: 4
+#| fig-height: 4
+library(tidyplots)
+tidyplot(diamonds, carat, price, height = NA, width = NA) |>
+    add(geom_hex(aes(fill = after_stat(count)), bins = 40)) |>
+    add(scale_fill_viridis_c()) |>
+    adjust_font(fontsize = 14)
+```
+
+## Coding agents have problems with figures in Quarto
+
+Often get figure sizes and placement wrong at first
+
+Guide to work arounds: can it be codified as an agent skill: https://github.com/steverozen/quarto-bioinfo
+
+
+
+Beware of different ways to specify font sizes in different parts of `ggplot2` and
+different interactions with scaling in the output.
+
+https://tidyverse.org/blog/2020/08/taking-control-of-plot-scaling/
+
+
+## Figures --- wait, there's more
+
+:::: {.columns}
+
+::: {.column width="45%"}
+```{.r style="font-size: 0.7em;"}
+#| label: fig-carat-ggplotly
+#| fig-cap: "Diamond price vs carat."
+#| fig-width: 6
+#| fig-height: 4
+#| out-width: "80%"
+p <- ggplot(diamonds, aes(carat, price)) +
+  geom_hex()
+plotly::ggplotly(p)
+```
+:::
+
+::: {.column width="55%"}
+```{r}
+#| label: fig-carat-ggplotly
+#| fig-cap: "Diamond price vs carat."
+#| fig-width: 6
+#| fig-height: 4
+#| out-width: "80%"
+p <- ggplot(diamonds, aes(carat, price)) + geom_hex()
+plotly::ggplotly(p)
+```
+:::
+
+::::
+
+## Figures -- a more interesting ggplotly example
+
+```{r}
+#| label: fig-gapminder-ggplotly
+data(gapminder, package = "gapminder")
+gg <- ggplot(gapminder, aes(gdpPercap, lifeExp, color = continent)) +
+  geom_point(aes(size = pop, frame = year, ids = country)) +
+  scale_x_log10()
+plotly::ggplotly(gg)
+```
+
+## Figures -- code for previous slide
+
+The key is the argument `frame = year` in the call to `geom_point`
+
+```{.r}
+data(gapminder, package = "gapminder")
+gg <- ggplot(gapminder, aes(gdpPercap, lifeExp, color = continent)) +
+  geom_point(aes(size = pop, frame = year, ids = country)) +
+  scale_x_log10()
+plotly::ggplotly(gg)
+```
+
+You can also call `plotly` directly. There's a whole book by Carson Sieviert: https://plotly-r.com/
+
+
+## Tables
+
+```{{r}}
+#| label: tbl-diamonds
+#| tbl-cap: "First five diamonds."
+knitr::kable(head(diamonds, 5))
+```
+
+ - Label starting with `tbl-` makes it a cross-referenceable table. -
+Reference in prose as `@tbl-diamonds`. - For richer tables: `gt::gt()`,
+`DT::datatable()`, `kableExtra`.
+
+## Table output {.smaller}
+
+```{r}
+#| label: tbl-diamonds
+#| tbl-cap: "First five diamonds."
+knitr::kable(head(diamonds, 5))
+```
+
+## [The `DT` package for interactive tables]{style="font-size: 0.85em;"} {.smaller}
+
+Sort by any column, search, page through rows, all client-side in the
+rendered HTML.
+
+```{r}
+#| label: tbl-diamonds-dt
+htmltools::div(
+  style = "font-size: 0.65em;",
+  DT::datatable(
+    head(diamonds, 100),
+    rownames  = FALSE,
+    filter    = "top",
+    options   = list(
+      pageLength = 5,
+      scrollX    = TRUE,
+      order      = list(list(6, "desc"))
+    )
+  )
+)
+```
+
+## Code for previous table
+
+``` r
+  DT::datatable(
+    head(diamonds, 100),
+    rownames  = FALSE,
+    filter    = "top",
+    options   = list(
+      pageLength = 5,
+      scrollX    = TRUE,
+      order      = list(list(6, "desc"))
+    )
+  )
+```
+
+## Inline code
+
+Embed values directly in your prose:
+
+``` markdown
+We analyzed `r knitr::inline_expr("nrow(diamonds)")` diamonds with a mean price of
+$`r knitr::inline_expr("round(mean(diamonds$price))")`.
+```
+
+Renders as:
+
+> We analyzed `r nrow(diamonds)` diamonds with a mean price of
+> $`r round(mean(diamonds$price))`.
+
+If the numbers come from your data / computation never ever ever *ever*
+write them literally in your prose; if your data or computation change
+then the numbers in the text will be out of sync.
+
+## Caching
+
+For slow chunks quarto provides a option to cache computations and
+specify when the cached value needs to be re-computed. 
+
+Easy to get these wrong! Use with caution, perhaps just during development.
+
+## A functional caching pattern
+
+````         
+```{{r}}
+#| label: raw-data
+#| cache: true
+#| cache.extra: !expr file.mtime("a_very_large_file.csv")
+rawdata <- readr::read_csv("a_very_large_file.csv")
+```
+````
+
+Various writing here ...
+
+````         
+``` {{r}}
+#| label: processed-data
+#| cache: true
+#| dependson: "raw-data"
+processed_data <- rawdata |> 
+  filter(!is.na(import_var)) |> 
+  mutate(new_variable = complicated_transformation(x, y, z))
+```
+````
+
+## How to edit Quarto docs
+
+- **RStudio** has a *visual editor* (What-you-see-is-what-you-get-style)
+  and a *source editor* (plain text). We will work in the **source
+  editor** today.
+- VS Code and Positron also have first-class Quarto support.
+- A `.qmd` is just text, so any editor works.
+
+## Typical workflow
+
+1.  Edit the `.qmd` in your editor.
+2.  Run chunks interactively to develop the analysis.
+3.  Render the whole document (`quarto render`) to catch reproducibility
+    problems early.
+4.  Commit the `.qmd` (and usually not the rendered output) to git.
+
+## Debugging in Quarto
+
+Demo how one does this, executing code blocks in quarto and then a copy of the code block in the console.
+(Use `diamond-sizes.qmd` from next slide)
+
+## Exercises, code chunks
+
+::: {style="font-size: 0.66em;"}
+
+1.  Add a section that explores how diamond sizes vary by `cut`,
+    `color`, and `clarity`. Assume the reader does not know R, so
+    instead of setting `echo: false` on every chunk, set it as a global
+    option.
+2.  Download `diamond-sizes.qmd` from
+    <https://github.com/hadley/r4ds/tree/main/quarto>. Add a section
+    that describes the largest 20 diamonds, including a table of their
+    most important attributes.
+3.  Modify `diamond-sizes.qmd` to use `label_comma()` for nicely
+    formatted output. Include the percentage of diamonds larger than 2.5
+    carats.
+
+:::
+
+## Exercises, figures
+
+::: {style="font-size: 0.66em;"}
+
+1.  Find an image of a diamond, paste it into `diamond-sizes.qmd`, add a
+    caption, resize it, and render. Note where the image is saved.
+2.  Edit the label of the plot chunk in `diamond-sizes.qmd` to start
+    with `fig-` and add `fig-cap`. Add a cross-reference to the figure
+    in the text above the chunk.
+3.  Change the figure size with each of these options in turn, render,
+    and describe what changes:
+    a.  `fig-width: 10`
+    b.  `fig-height: 3`
+    c.  `out-width: "100%"`
+    d.  `out-width: "20%"`
+
+:::
+
+## Exercises, tables
+
+1.  Insert a code chunk into `diamond-sizes.qmd` and use
+    `knitr::kable()` to show the first 5 rows of `diamonds`.
+2.  Display the same table with `gt::gt()` instead.
+3.  Add a chunk label starting with `tbl-` and a caption via `tbl-cap`.
+    Add a cross-reference to the table in the text above the chunk.
+
+## Quarto drawbacks / pain points
+
+- Debugging
+- Multiple re-renderings while makeing adjustments
+- Silent errors
+- Figure sizes and text sizes in figures
+- Different output formats not all that uniform at the quarto level, e.g. embedded html, css files, 
+- Caching
+- Passing in parameters to the whole document
+- Managing sub-documents 
+
+## The Quarto rendering pipeline
+
+```{=html}
+<style>
+.pipe {
+  display: grid;
+  grid-template-columns: auto 1fr auto 1fr auto 1fr auto;
+  align-items: center;
+  gap: 0.35em 0.5em;
+  font-size: 0.46em;
+  margin: 0.6em 0 0.4em 0;
+}
+.pipe .box {
+  border: 2px solid #4338ca;
+  background: #eef2ff;
+  color: #1e1b4b;
+  border-radius: 8px;
+  padding: 0.55em 0.7em;
+  text-align: center;
+  line-height: 1.25;
+}
+.pipe .box b { display: block; font-size: 1.15em; }
+.pipe .box span { display: block; color: #4b5563; font-size: 0.85em; }
+.pipe .ast { border-color: #c2410c; background: #fff7ed; color: #431407; }
+.pipe .out { border-color: #047857; background: #ecfdf5; color: #022c22; }
+.pipe .out div { padding: 0.12em 0; }
+.pipe .arr { text-align: center; color: #374151; line-height: 1.2; }
+.pipe .arr .lab { display: block; font-size: 0.8em; color: #4b5563; }
+.pipe .arr .gly { display: block; font-size: 1.5em; margin-top: -0.1em; }
+.pipe .lua {
+  grid-column: 5; text-align: center; font-size: 0.85em; color: #9a3412;
+}
+.pipe .lua .gly { display: block; font-size: 1.4em; line-height: 1; }
+.pipe .lua b { display: block; }
+</style>
+
+<div class="pipe">
+  <div class="box"><b>.qmd</b><span>prose + R chunks</span></div>
+  <div class="arr"><span class="lab">knitr<br>runs the R code</span><span class="gly">&#10230;</span></div>
+  <div class="box"><b>.md</b><span>plain markdown<br>plots are now .png</span></div>
+  <div class="arr"><span class="lab">pandoc<br>reader</span><span class="gly">&#10230;</span></div>
+  <div class="box ast"><b>AST</b><span>format-neutral<br>syntax tree</span></div>
+  <div class="arr"><span class="lab">pandoc<br>writer</span><span class="gly">&#10230;</span></div>
+  <div class="box out">
+    <div><b>HTML / revealjs</b></div>
+    <div><b>PDF via LaTeX</b></div>
+    <div><b>.docx</b></div>
+  </div>
+
+  <div class="lua"><span class="gly">&#8593;</span><b>Lua filters</b>rewrite the tree here</div>
+</div>
+```
+
+::: {style="font-size: 0.66em;"}
+Two separate programs:
+
+**knitr** runs your R chunks and writes
+plain markdown, with every plot already saved as a `.png`.
+
+**pandoc** 
+parses that markdown into an AST (abstract syntax tree) and writes it out.
+
+The AST is format-neutral, so one source file reaches
+every output format.
+
+It is the only place a **Lua filter** can reach in
+and rewrite the document. That is how Quarto itself implements callouts,
+columns, and cross-references.
+:::
+
+## Div fences in action
+
+::: {style="font-size: 0.7em;"}
+A **fence** is a delimiter line marking where a block starts and ends, exactly
+like the ` ``` ` around an R chunk. A `:::` fence delimits a **div**, a generic
+container you can hang classes and styles on.
+:::
+
+::: {.columns}
+::: {.column width="47%"}
+::: {style="font-size: 0.6em;"}
+**What you write**
+
+````markdown
+::: {.columns}
+::: {.column width="47%"}
+Left-hand content.
+:::
+::: {.column width="53%"}
+Right-hand content.
+:::
+:::
+````
+:::
+:::
+::: {.column width="53%"}
+::: {style="font-size: 0.6em;"}
+**What the attributes do**
+
+- `{.columns}` and `{.column width="47%"}` are classes that revealjs already
+  has CSS for, so you get a two-column slide for free.
+- `{style="font-size: 0.7em;"}` is raw CSS, the escape hatch for the one
+  slide whose content will not fit.
+- `{.smaller}` is revealjs's built-in shrink, no CSS of your own needed.
+
+This slide is built from exactly the fences shown on the left.
+:::
+:::
+:::
+
+## The bare fence trap
+
+::: {style="font-size: 0.68em;"}
+Pandoc does **not** pair fences by length. A fence **with attributes** opens a
+div, and a **bare** fence closes the innermost open div. So a fence you meant
+as an opener, but gave no attributes, is silently read as a closer.
+:::
+
+::: {.columns}
+::: {.column width="50%"}
+::: {style="font-size: 0.58em;"}
+**Broken**
+
+````markdown
+::: {.columns}
+::: {.column width="50%"}
+Left.
+:::
+:::
+Right.
+:::
+:::
+````
+
+The fourth fence closes the first column, then the bare fifth one closes
+`.columns` instead of opening the second column. `Right.` spills out of the
+layout and the two leftover fences print as literal `:::` on the slide.
+:::
+:::
+::: {.column width="50%"}
+::: {style="font-size: 0.58em;"}
+**Fixed**
+
+````markdown
+::: {.columns}
+::: {.column width="50%"}
+Left.
+:::
+::: {.column width="50%"}
+Right.
+:::
+:::
+````
+
+Every opening fence carries an attribute, so pandoc can tell openers from
+closers and the nesting is unambiguous.
+:::
+:::
+:::
+
+::: {style="font-size: 0.62em;"}
+Writing the outer fence longer (`::::`) is a readability habit, not a fix. It
+helps *you* see the pairing in a long slide, but it does not rescue a bare
+opener. The rule that matters: **give every opening fence a class or a style.**
+:::
+
+
+## Summary
+
+::: {style="font-size: 0.66em;"}
+
+- A `.qmd` is YAML header + Markdown formatting + code chunks.
+- Render with `quarto render` to keep prose, code, and output in sync.
+- Chunk options control what is shown and what is run.
+
+Why:
+
+- **Communicate results, methods, and code in one reproducible
+  document**
+- **Reproducible.** Re-render the document and every number, figure, and
+  table is recomputed from the data.
+- **Multi-format.** The same `.qmd` source renders to HTML, dynamic
+  dashboards, PDF, Word, slides (and websites and books).
+- **Plain text.** Diffs cleanly in git, easy to review, easy to share.
+
+Reference: <https://r4ds.hadley.nz/quarto.html>
+
+:::
+
+## Questions?
+
+```{r}
+#| fig-width: 4
+#| fig-height: 4
+library(tidyplots)
+tidyplot(diamonds, carat, price, height = NA, width = NA) |>
+    add(geom_hex(aes(fill = after_stat(count)), bins = 40)) |>
+    add(scale_fill_viridis_c()) |>
+    adjust_font(fontsize = 14)
+```
