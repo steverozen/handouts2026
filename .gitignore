@@ -1,0 +1,8 @@
+# Large generated Seurat/analysis objects (regenerate by running the tutorials)
+*.rds
+*.RData
+*.rda
+*.h5
+*.h5ad
+*.h5seurat
+*.loom
